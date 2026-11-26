@@ -11,11 +11,11 @@ load_dotenv()
 # ==============================
 
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "127.0.0.1"),
+    "host": os.getenv("DB_HOST"),
     "port": int(os.getenv("DB_PORT", "3306")),
     "user": os.getenv("dbuser"),
     "password": os.getenv("dbpassword"),
-    "database": os.getenv("DB_NAME", "civic_db"),
+    "database": os.getenv("DB_NAME"),
     "charset": "utf8mb4",
     "use_unicode": True,
     "ssl_disabled": False
