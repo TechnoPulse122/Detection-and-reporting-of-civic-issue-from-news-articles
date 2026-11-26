@@ -4,24 +4,35 @@ import os
 
 
 load_dotenv()
+
+
 # ==============================
-# CONFIGURATION
+# DATABASE CONFIGURATION
 # ==============================
+
 DB_CONFIG = {
-    "host": "localhost",
-    "user": os.getenv("dbuser"),              # Replace with your MySQL username
-    "password": os.getenv("dbpassword"),    # Replace with your MySQL password
-    "database": "civic_db"  ,     # Replace with your MySQL database name
+    "host": os.getenv("DB_HOST", "127.0.0.1"),
+    "port": int(os.getenv("DB_PORT", "3306")),
+    "user": os.getenv("dbuser"),
+    "password": os.getenv("dbpassword"),
+    "database": os.getenv("DB_NAME", "civic_db"),
     "charset": "utf8mb4",
-    "use_unicode": True
+    "use_unicode": True,
+    "ssl_disabled": False
 }
 
 # ==============================
 # CONNECTION
 # ==============================
+
 def get_connection():
     conn = mysql.connector.connect(**DB_CONFIG)
     return conn
+
+# ==============================
+# CONFIGURATION
+# ==============================
+
 
 # ==============================
 # INITIALIZE TABLES
