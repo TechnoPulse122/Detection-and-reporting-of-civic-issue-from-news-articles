@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Critical System Alerts | Civic Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; color: #334155; background-color: #f4f6fa; padding-top: 56px; }
+        
+        .top-navbar-dark { background-color: #0f172a !important; height: 56px; z-index: 1050; }
+        .top-navbar-dark .nav-link-custom {
+            color: #94a3b8; font-size: 0.875rem; font-weight: 500; padding: 6px 12px; border-radius: 6px;
+            transition: all 0.2s ease; text-decoration: none; display: inline-flex; align-items: center;
+        }
+        .top-navbar-dark .nav-link-custom:hover { color: #ffffff; background-color: rgba(255, 255, 255, 0.08); }
+        .top-navbar-dark .nav-link-custom.active { color: #ffffff; background-color: rgba(255, 255, 255, 0.15); }
+        
+        .sidebar { 
+            width: 16.666667%; border-right: 1px solid #e2e8f0; z-index: 100; background: white; 
+            position: fixed; top: 56px; left: 0; height: calc(100vh - 56px); 
+        }
+        .sidebar .nav-link { color: #64748b; font-weight: 500; font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; transition: 0.2s; text-decoration: none; display: block; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #0f172a; background-color: #f1f5f9; }
+        
+        .extra-small { font-size: 0.75rem !important; }
+        .alert-strip { border-left: 5px solid #dc3545 !important; transition: transform 0.2s ease; }
+        .alert-strip:hover { transform: translateX(3px); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark top-navbar-dark fixed-top px-4 shadow-sm">
+    <div class="container-fluid px-0 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-square-poll-vertical text-white fs-4"></i>
+            <span class="navbar-brand m-0 p-0 fw-bold fs-5 tracking-wide text-white">SANKALP</span>
+        </div>
+        
+        <!-- Top Nav - Alerts Linked and Set to Active Status -->
+        <div class="d-none d-lg-flex align-items-center gap-2 mx-auto">
+            <a href="{{ url_for('index') }}" class="nav-link-custom"><i class="fa-solid fa-satellite-dish me-2"></i>Live Feed</a>
+            <a href="{{ url_for('reports') }}" class="nav-link-custom"><i class="fa-solid fa-circle-exclamation me-2"></i>Issues</a>
+            <a href="{{ url_for('analytics') }}" class="nav-link-custom"><i class="fa-solid fa-chart-line me-2"></i>Analytics</a>
+            <a href="{{ url_for('alerts_page') }}" class="nav-link-custom active position-relative">
+                <i class="fa-regular fa-bell me-2"></i>Alerts
+                <span class="badge rounded-pill bg-danger ms-1 extra-small" style="font-size: 0.65rem; padding: 2px 5px;">{{ critical_count }}</span>
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+                <button class="btn p-0 border-0 bg-transparent shadow-none" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile" class="rounded-circle border border-secondary" style="width: 32px; height: 32px; object-fit: cover;">
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item small py-2 text-danger fw-semibold" href="/logout"><i class="fa-solid fa-power-off me-2"></i>Sign Out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation Layout -->
+        <nav class="col-md-2 d-none d-md-block sidebar p-3">
+            <div class="mb-4 px-2 pt-2">
+                <h6 class="fw-bold text-dark m-0 tracking-wide text-uppercase" style="font-size: 0.85rem;">Civic Issue System</h6>
+                <span class="text-muted extra-small fw-semibold">LUDHIANA DISTRICT</span>
+            </div>
+            <ul class="nav flex-column gap-2">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}"><i class="fa-solid fa-table-cells-large me-2"></i>Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('reports') }}"><i class="fa-solid fa-file-shield me-2"></i>Issue Reports</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logs') }}"><i class="fa-solid fa-gears me-2"></i>System Logs</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Workspace: Exclusively High Severity Issues Grid -->
+        <main class="col-md-10 ms-auto px-md-4 py-4">
+            
+            <!-- Header Operational Warning Metric Block -->
+            <div class="card p-4 bg-danger bg-opacity-10 border-0 mb-4 rounded-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-danger text-white rounded-3 p-3">
+                        <i class="fa-solid fa-triangle-exclamation fs-3"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold m-0 text-danger" style="letter-spacing: -0.5px;">High Severity Live Alerts</h3>
+                        <p class="text-danger opacity-75 small m-0">Currently displaying only critical anomalies requiring immediate administrative processing across Ludhiana Municipality.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List of Critical Anomalies -->
+            <div class="d-flex flex-column gap-3">
+                {% for issue in critical_issues %}
+                <div class="card p-4 bg-white shadow-sm alert-strip">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="bg-light p-2.5 rounded-3 border text-danger">
+                                <i class="fa-solid fa-circle-exclamation fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge bg-danger rounded-2 px-2 py-1 fw-bold extra-small text-uppercase">CRITICAL</span>
+                                    <span class="text-secondary fw-semibold extra-small">#LUD-{{ issue.id }}</span>
+                                    <span class="text-muted extra-small">• Reported At: {{ issue.detected_at }}</span>
+                                </div>
+                                <h5 class="fw-bold text-dark my-1" style="font-size: 1.1rem;">{{ issue.issue | upper }}</h5>
+                                <p class="text-secondary small mb-0 m-0">Source origin traced via <strong class="text-dark">{{ issue.source }}</strong>.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="{{ issue.link }}" target="_blank" class="btn btn-danger btn-sm px-3 rounded-2 fw-semibold extra-small">
+                                <i class="fa-solid fa-bolt me-1"></i>Investigate
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5 card bg-white border">
+                    <div class="p-4">
+                        <i class="fa-solid fa-circle-check text-success mb-3" style="font-size: 3.5rem;"></i>
+                        <h4 class="fw-bold text-dark">No High Severity Alerts</h4>
+                        <p class="text-muted small m-0">All pipelines are running smoothly. Zero critical issues are pending review.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

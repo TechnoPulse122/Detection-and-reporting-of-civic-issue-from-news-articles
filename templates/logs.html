@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Logs | Civic Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; color: #334155; background-color: #f4f6fa; padding-top: 56px; }
+        
+        /* ─── FULL WIDTH TOP NAVBAR STYLING ─── */
+        .top-navbar-dark {
+            background-color: #0f172a !important;
+            height: 56px;
+            z-index: 1050;
+        }
+        .top-navbar-dark .nav-link-custom {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .top-navbar-dark .nav-link-custom:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        .top-navbar-dark .nav-link-custom.active {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .sidebar { 
+            width: 16.666667%; border-right: 1px solid #e2e8f0; z-index: 100; background: white; 
+            position: fixed; top: 56px; left: 0; height: calc(100vh - 56px); 
+        }
+        .sidebar .nav-link { color: #64748b; font-weight: 500; font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; transition: 0.2s; text-decoration: none; display: block; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: #0f172a; background-color: #f1f5f9; }
+        .extra-small { font-size: 0.75rem !important; }
+        .card { border-radius: 12px !important; border: none !important; box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark top-navbar-dark fixed-top px-4 shadow-sm">
+    <div class="container-fluid px-0 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-square-poll-vertical text-white fs-4"></i>
+            <span class="navbar-brand m-0 p-0 fw-bold fs-5 tracking-wide text-white">SANKALP</span>
+        </div>
+        
+        <!-- Synchronized Middle Top Menu Navbar Navigation -->
+        <div class="d-none d-lg-flex align-items-center gap-2 mx-auto">
+            <a href="{{ url_for('index') }}" class="nav-link-custom"><i class="fa-solid fa-satellite-dish me-2"></i>Live Feed</a>
+            <a href="{{ url_for('reports') }}" class="nav-link-custom"><i class="fa-solid fa-circle-exclamation me-2"></i>Issues</a>
+            <a href="{{ url_for('analytics') }}" class="nav-link-custom"><i class="fa-solid fa-chart-line me-2"></i>Analytics</a>
+            <a href="#" class="nav-link-custom position-relative">
+                <i class="fa-regular fa-bell me-2"></i>Alerts
+                <span class="badge rounded-pill bg-danger ms-1 extra-small" style="font-size: 0.65rem; padding: 2px 5px;">12</span>
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+                <button class="btn p-0 border-0 bg-transparent shadow-none" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile" class="rounded-circle border border-secondary" style="width: 32px; height: 32px; object-fit: cover;">
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item small py-2 text-danger fw-semibold" href="/logout"><i class="fa-solid fa-power-off me-2"></i>Sign Out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navbar Navigation Links (Analytics & Community Cleaned Out) -->
+        <nav class="col-md-2 d-none d-md-block sidebar p-3">
+            <div class="mb-4 px-2 pt-2">
+                <h6 class="fw-bold text-dark m-0 tracking-wide text-uppercase" style="font-size: 0.85rem;">Civic Issue System</h6>
+                <span class="text-muted extra-small fw-semibold">LUDHIANA DISTRICT</span>
+            </div>
+            <ul class="nav flex-column gap-2">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}"><i class="fa-solid fa-table-cells-large me-2"></i>Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('reports') }}"><i class="fa-solid fa-file-shield me-2"></i>Issue Reports</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{{ url_for('logs') }}"><i class="fa-solid fa-gears me-2"></i>System Logs</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Workspace Contents Panel -->
+        <main class="col-md-10 ms-auto px-md-4 py-4">
+            <div class="mb-4">
+                <h2 class="fw-bold m-0 text-dark" style="letter-spacing: -0.5px;">System Logs</h2>
+                <p class="text-muted small m-0">A simple overview of recent system activity. Clear information for non-technical users.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Left Hand Section: Activity Blocks Layout -->
+                <div class="col-md-9">
+                    <div class="row g-3">
+                        
+                        <!-- Block A: AI Classification Status -->
+                        <div class="col-md-12">
+                            <div class="card p-4 bg-white border d-flex flex-row align-items-start gap-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                                    <i class="fa-solid fa-robot" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div class="w-100">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold text-dark mb-1">AI Classification Complete (Llama 8B)</h6>
+                                        <span class="text-muted extra-small">2 minutes ago</span>
+                                    </div>
+                                    <p class="text-secondary small mb-2">Processed news articles safely for 'Model Town' and 'Civil Lines'. Categorized 'Traffic' and 'Water Supply' categories into database.</p>
+                                    <button class="btn btn-outline-primary btn-sm extra-small py-1 px-3 rounded-2 fw-semibold">View AI Report</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Block B: Database Health Status -->
+                        <div class="col-md-6">
+                            <div class="card p-4 bg-white border h-100 d-flex flex-row align-items-start gap-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success">
+                                    <i class="fa-solid fa-database" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <h6 class="fw-bold text-dark mb-1">Database Backup</h6>
+                                    </div>
+                                    <span class="text-muted extra-small d-block mb-1">3 hours ago</span>
+                                    <p class="text-secondary small m-0">System completed a full data checkpoint snapshot. Secure, clean, and fully up to date.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Block C: Rate Limit Warning Monitor -->
+                        <div class="col-md-6">
+                            <div class="card p-4 bg-white border h-100 d-flex flex-row align-items-start gap-3">
+                                <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning">
+                                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-baseline">
+                                        <h6 class="fw-bold text-dark mb-1">User Alert Sent (Token Limit)</h6>
+                                    </div>
+                                    <span class="text-muted extra-small d-block mb-1">15 minutes ago</span>
+                                    <p class="text-secondary small mb-2">Your AI background token limit for the current hour window was reached. Automatic execution paused safely.</p>
+                                    <div class="alert alert-warning py-1 px-2 extra-small m-0 rounded-2">Free tier provides limited tokens to prevent overload. It resets soon!</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Block D: Quick Summary Counters Display Panel -->
+                        <div class="col-md-12">
+                            <div class="card p-4 bg-white border">
+                                <h6 class="fw-bold text-dark mb-3">Clear Summary (Last 24 Hours)</h6>
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                        <span class="small text-secondary"><strong class="text-dark">{{ total_classified or 125 }}</strong> Articles Classified</span>
+                                        <i class="fa-solid fa-circle-check text-success"></i>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                        <span class="small text-secondary"><strong class="text-dark">3</strong> AI Requests Paused (Quota Window Hit)</span>
+                                        <i class="fa-solid fa-circle-check text-success"></i>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="small text-secondary"><strong class="text-dark">1</strong> Database Backup Saved</span>
+                                        <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Hand Section: Explanatory Beginner Onboarding Sidebar -->
+                <div class="col-md-3">
+                    <div class="card p-4 bg-white border h-100">
+                        <h6 class="fw-bold text-dark mb-1">Log Guide for New Users</h6>
+                        <p class="text-muted extra-small mb-3">Understanding the monitoring system colors and simple concepts.</p>
+                        <hr class="my-2">
+                        <div class="d-flex flex-column gap-3 mt-2">
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-success rounded-circle p-2 mt-1" style="width: 10px; height: 10px; display: inline-block;"></span>
+                                <div>
+                                    <h6 class="small fw-bold text-dark mb-0">Green = Success</h6>
+                                    <p class="extra-small text-muted m-0">Everything worked perfectly (like a complete daily backup file creation).</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-warning rounded-circle p-2 mt-1" style="width: 10px; height: 10px; display: inline-block;"></span>
+                                <div>
+                                    <h6 class="small fw-bold text-dark mb-0">Yellow = Important Info</h6>
+                                    <p class="extra-small text-muted m-0">The pipeline paused gracefully because a limit was reached.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-info rounded-circle p-2 mt-1" style="width: 10px; height: 10px; display: inline-block;"></span>
+                                <div>
+                                    <h6 class="small fw-bold text-dark mb-0">Blue = General Information</h6>
+                                    <p class="extra-small text-muted m-0">System updates indicating when the AI categorizes raw text data files.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
