@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for, session, Response
 import io
 import csv
@@ -6,13 +7,17 @@ from db import get_connection
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 app = Flask(__name__)
-#app.secret_key =os.getenv("secret_key")
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+if not app.secret_key:
+    raise RuntimeError("FLASK_SECRET_KEY is missing!")
+
 # ==============================
 # CONFIG & AUTH
 # ==============================
-load_dotenv()
+
 ADMIN_USER = "admin"
 ADMIN_PASS = os.getenv("adminPass")
 
