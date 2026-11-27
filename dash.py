@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
-app.secret_key =os.getenv("app.secret_key")
-
+#app.secret_key =os.getenv("secret_key")
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 # ==============================
 # CONFIG & AUTH
 # ==============================
