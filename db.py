@@ -25,6 +25,9 @@ DB_CONFIG = {
 # CONNECTION
 # ==============================
 
+print("DB username suffix correct:",
+      os.getenv("dbuser", "").endswith(".civic-project-rptvwd"))
+
 def get_connection():
     conn = mysql.connector.connect(
         **DB_CONFIG,
