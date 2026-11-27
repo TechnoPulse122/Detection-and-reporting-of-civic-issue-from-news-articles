@@ -26,9 +26,11 @@ DB_CONFIG = {
 # ==============================
 
 def get_connection():
-    conn = mysql.connector.connect(**DB_CONFIG)
+    conn = mysql.connector.connect(
+        **DB_CONFIG,
+        connection_timeout=10
+    )
     return conn
-
 # ==============================
 # CONFIGURATION
 # ==============================
