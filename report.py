@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import List, Dict, Optional
 from dotenv import load_dotenv
 import os
+import pymysql
 
 # Standardized import matching your core MySQL Database helper file
 from db import get_connection, log_email, init_db
@@ -141,7 +142,7 @@ def _match_zone(locality: str) -> str:
 def get_unreported_issues() -> List[Dict]:
     """Fetch detected civic issues from MySQL that haven't been emailed yet."""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     # Query issues missing delivered records in email_log
     cursor.execute("""

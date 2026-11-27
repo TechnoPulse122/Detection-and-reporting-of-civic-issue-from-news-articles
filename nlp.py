@@ -2,6 +2,7 @@ import json
 import re
 import unicodedata
 from typing import Dict, List, Optional
+import pymysql
 
 # ==============================
 # 1. TEXT CLEANING
@@ -214,7 +215,7 @@ from db import get_connection
 def get_unprocessed(limit: Optional[int] = None) -> List[Dict]:
     """Fetch articles that have not yet gone through preprocessing."""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
 
     query = """
         SELECT id, title, content

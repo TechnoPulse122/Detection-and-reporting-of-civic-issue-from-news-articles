@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from db import get_connection
 from dotenv import load_dotenv
 import os
+import pymysql
 
 load_dotenv()
 
@@ -50,7 +51,8 @@ def index():
         return redirect(url_for('login'))
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         # 1. Counter Statistics (Excluding General News)
         cursor.execute("SELECT COUNT(*) as count FROM issues WHERE issue != 'General News'")
@@ -128,7 +130,7 @@ def reports():
         return redirect(url_for('login'))
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         cursor.execute("SELECT DISTINCT department FROM issues WHERE department IS NOT NULL AND department != '' AND department != 'None' AND issue != 'General News'")
         department_list = cursor.fetchall()
@@ -206,7 +208,7 @@ def analytics():
         return redirect(url_for('login'))
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         # 6-Month Rolling Calendar Trend Metrics Query (Strict SQL Mode Compatible)
         trend_query = """
@@ -262,7 +264,7 @@ def alerts_page():
         return redirect(url_for('login'))
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         # Explicitly filtering high severity alerts only
         cursor.execute("SELECT * FROM issues WHERE LOWER(severity) = 'high' AND issue != 'General News' ORDER BY id DESC")
@@ -286,7 +288,7 @@ def logs():
         return redirect(url_for('login'))
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
 
         cursor.execute("SELECT COUNT(*) as count FROM issues WHERE issue != 'General News'")
         total_classified = cursor.fetchone()['count']
@@ -308,7 +310,7 @@ def export_csv():
         return redirect(url_for('login'))
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT * FROM issues WHERE issue != 'General News' AND department != 'None'")
         issues = cursor.fetchall()
         cursor.close()

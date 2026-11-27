@@ -1,10 +1,10 @@
-import mysql.connector
+
+
+import pymysql
 from dotenv import load_dotenv
 import os
 
-
 load_dotenv()
-
 
 # ==============================
 # DATABASE CONFIGURATION
@@ -18,22 +18,18 @@ DB_CONFIG = {
     "database": os.getenv("DB_NAME"),
     "charset": "utf8mb4",
     "use_unicode": True,
-    "ssl_disabled": False
+    "ssl": {"check_hostname": False},
+    "connect_timeout": 10
 }
 
 # ==============================
 # CONNECTION
 # ==============================
 
-print("DB username suffix correct:",
-      os.getenv("dbuser", "").endswith(".civic-project-rptvwd"))
-
 def get_connection():
-    conn = mysql.connector.connect(
-        **DB_CONFIG,
-        connection_timeout=10
-    )
+    conn = pymysql.connect(**DB_CONFIG)
     return conn
+
 # ==============================
 # CONFIGURATION
 # ==============================

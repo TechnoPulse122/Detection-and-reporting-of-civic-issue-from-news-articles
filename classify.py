@@ -5,6 +5,7 @@ from dotenv import load_dotenv  # 1. Add this import
 from typing import Dict, List, Optional
 from groq import Groq
 from openai import OpenAI
+import pymysql
 
 # Import your existing MySQL communication layers
 #from db import get_connection, insert_issue, init_db
@@ -1147,7 +1148,8 @@ def get_unclassified_articles(limit: Optional[int] = None) -> List[Dict]:
     """
 
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
 
     query = """
         SELECT
@@ -1199,7 +1201,7 @@ def get_unclassified_articles(limit: Optional[int] = None) -> List[Dict]:
 #     """
 
 #     conn = get_connection()
-#     cursor = conn.cursor(dictionary=True)
+
 
 #     query = """
 #         SELECT 
